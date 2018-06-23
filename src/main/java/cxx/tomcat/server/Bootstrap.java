@@ -1,9 +1,11 @@
 package cxx.tomcat.server;
 
 import cxx.tomcat.server.http.HttpServerThread;
+import cxx.tomcat.server.util.LogUtil;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 /**
  * 启动MyTomcat
@@ -12,12 +14,13 @@ import java.net.Socket;
  */
 public class Bootstrap {
     private boolean isShutDown = false;
+    private static final Logger log = LogUtil.getLogger(Bootstrap.class);
+    private static int port=8888;
     /**
      * 启动服务器
      */
     public void start(){
-        int port=8888;
-        System.out.println("Mytomcat服务开启.....http://127.0.0.1:"+port+"/login.html");
+        log.info("Mytomcat服务开启.....");
         start(port);
     }
 
@@ -26,7 +29,7 @@ public class Bootstrap {
      */
     private void stop() {
         isShutDown = true;
-        System.out.println("Mytomcat服务关闭.....");
+        log.info("Mytomcat服务关闭.....");
     }
 
     /**
@@ -60,7 +63,10 @@ public class Bootstrap {
     }
 
     public static void main(String[] args) {
+       System.out.println("Mytomcat服务开启.....http://127.0.0.1:"+port+"/login.html");
        Bootstrap boot = new Bootstrap();
        boot.start();
     }
 }
+
+

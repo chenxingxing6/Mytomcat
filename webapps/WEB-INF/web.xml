@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<WebApp>
+    <servlet>
+        <servlet-name>test</servlet-name>
+        <servlet-class>cxx.test.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>test</servlet-name>
+        <url-pattern>/doLogin</url-pattern>
+    </servlet-mapping>
+</WebApp>

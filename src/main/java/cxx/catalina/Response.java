@@ -1,7 +1,10 @@
 package cxx.catalina;
 
+import cxx.tomcat.server.util.LogUtil;
+
 import java.io.*;
 import java.util.Date;
+import java.util.logging.Logger;
 
 
 /**
@@ -10,7 +13,7 @@ import java.util.Date;
  * @Date: 2018/6/22 9:45
  */
 public class Response {
-
+    private static final Logger log = LogUtil.getLogger(Response.class);
     private static final int BUFFER_SIZE=1024;
     private static final String SPACE=" ";
     private static final String ENTER = "\r\n";
@@ -24,6 +27,8 @@ public class Response {
     private BufferedWriter bw;
     //获取request请求
     private Request request;
+    private OutputStream os;
+
 
     public Response(){
         headerInfo=new StringBuilder();
@@ -31,10 +36,15 @@ public class Response {
         contentLength=0;
     }
 
-    public Response(OutputStream os,Request request){
+    public Response(OutputStream os,Request request) throws Exception {
         this();
+        this.os=os;
         this.request=request;
         this.bw=new BufferedWriter(new OutputStreamWriter(os));
+    }
+
+    public OutputStream getOutStream(){
+        return os;
     }
 
     /**
@@ -42,6 +52,7 @@ public class Response {
      * @param code
      */
     private void createHeader(int code){
+        log.info("创建响应头....");
         String type = request.getAction();
         headerInfo.append("HTTP/1.1").append(SPACE).append(code).append(SPACE);
         switch (code) {
@@ -57,18 +68,34 @@ public class Response {
             default:
                 break;
         }
-        headerInfo.append("Server:myServer").append(SPACE).append("0.0.1v").append(ENTER);
+        headerInfo.append("Server:myServer").append(SPACE).append("1.0.1v").append(ENTER);
         headerInfo.append("Date:Sat,"+SPACE).append(new Date()).append(ENTER);
         headerInfo.append("Content-Length:").append(contentLength).append(ENTER);
         if(type.endsWith("html")){
-            headerInfo.append("Content-Type:text/html;charset=UTF-8").append(ENTER);
+            headerInfo.append("Content-Type: text/html;charset=UTF-8").append(ENTER);
         }
         if (type.endsWith("ico")){
-            headerInfo.append("Content-Type:application/octet-stream;charset=UTF-8").append(ENTER);
+            headerInfo.append("Content-Type: application/octet-stream;charset=UTF-8").append(ENTER);
         }
-        if (type.endsWith("png")||type.endsWith("jpg")){
-            System.out.println("图片资源");
-            headerInfo.append("Content-Type:image/jpeg;charset=UTF-8").append(ENTER);
+        if (type.endsWith("jpg")){
+            headerInfo.append("Content-Type: image/jpeg").append(ENTER);
+        }
+        if (type.endsWith("png")){
+            headerInfo.append("Content-Type: image/png").append(ENTER);
+        }
+        if (type.endsWith("css")){
+            headerInfo.append("Content-Type: text/css;charset=UTF-8").append(ENTER);
+        }
+        if (type.endsWith("txt")){
+            headerInfo.append("Content-Type: text/plain;charset=UTF-8").append(ENTER);
+        }
+        if (type.endsWith("js")){
+            headerInfo.append("Content-Type:application/javascript;charset=UTF-8").append(ENTER);
+
+        }
+        if (!type.contains(".")){
+            headerInfo.append("Content-Type:text/html;charset=UTF-8").append(ENTER);
+            headerInfo.append("Connection:keep-alive").append(ENTER);
         }
         headerInfo.append(ENTER);
     }
@@ -89,20 +116,28 @@ public class Response {
      * @param code
      */
     public void pushToClient(int code){
-        createHeader(code);
+        log.info("响应客户端...头部信息...");
         try {
+            createHeader(code);
             bw.append(headerInfo.toString());
-            System.out.println(headerInfo.toString());
+            log.info(headerInfo.toString());
             bw.append(textContent.toString());
             bw.flush();
         }catch (Exception e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }finally {
             try {
-                bw.close();
+                if (bw!=null) {
+                    bw.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    //客户端重定向
+    public void sendRedirect(String location){
+
     }
 }

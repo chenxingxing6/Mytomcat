@@ -1,14 +1,19 @@
 package cxx.catalina;
 
+import cxx.tomcat.server.util.LogUtil;
+
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.logging.Logger;
+
 /**
  * 代表一个HTTP请求，它的构造方法传入一个InputStream输入流
  * @Author: cxx
  * @Date: 2018/6/22 9:33
  */
 public class Request {
+    private static final Logger log = LogUtil.getLogger(Request.class);
     private static final String ENTER = "\r\n";
     //接收请求
     private BufferedReader br ;
@@ -20,6 +25,7 @@ public class Request {
     private String action ;
     //通过解析头信息得到传过来的请求参数 ，可能存在一Key多Value的情况所以用list
     private Map<String, List<String>> parameter;
+
 
     //得到浏览器发过来的头信息
     public Request() {
@@ -39,7 +45,7 @@ public class Request {
             }
             System.out.println(requestHeader);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         //解析头部信息
         parseRequestHeader();
