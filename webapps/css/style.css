@@ -1,0 +1,31 @@
+#con{
+	width: 300px;
+	height: 250px;
+	background: blueviolet;
+	margin:100px auto;
+	text-align: center;
+	border-radius: 10px;
+	opacity: 0.8;
+}
+h1{
+	color: white;
+}
+
+form{
+	display: block;
+	width: 350px;
+	margin-left: 15px;
+}
+
+table tr{
+	line-height: 40px;
+}
+
+table tr input{
+	height: 25px;
+}
+
+#btn{
+	width: 80px;
+	height: 30px;
+}
